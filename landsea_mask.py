@@ -11,6 +11,8 @@ values are sea, and everything else is land.
 """
 
 from netCDF4 import Dataset
+import numpy as np
+import time
 
 dataset = Dataset('/home/dvalters/Datasets/WFDEI_global_dyn.month.2d.gpp_gb.2000.1.nc',
                   format='NETCDF4_CLASSIC')
@@ -29,7 +31,10 @@ print(dataset.variables)
 for dimobj in dataset.dimensions.values():
     print(dimobj)
 
-# prints the lat an longitude dimensions, and their size
+# prints the lat and longitude dimensions, and their size
+lat = dataset.dimensions['lat']
+lon = dataset.dimensions['lon']
+
 print(dataset.dimensions['lat'])
 print(dataset.dimensions['lon'])
 
@@ -49,3 +54,61 @@ GPP = dataset.variables['gpp']
 # Get a list of variable attributes for GPP
 for attr in GPP.ncattrs():
     print(attr, '=', getattr(GPP, attr))
+
+# Create a new netcdf file to be used as the land sea mask
+
+landsea = Dataset('/home/dvalters/Datasets/landsea.nc', 'w', format='NETCDF4_CLASSIC')
+print(landsea.file_format)
+
+# Our landsea mask file should have the same dimensions as the input data
+landsea_lat = landsea.createDimension('lat', len(lat))
+landsea_lon = landsea.createDimension('lon', len(lon))
+landsea_time = landsea.createDimension('time', None)
+
+# Now create the coordinate variables
+landsea_lats = landsea.createVariable('latitude', np.float64, ('lat'))
+landsea_lons = landsea.createVariable('longitude', np.float64, ('lon'))
+landsea_times = landsea.createVariable('time', np.float64, ('time',))
+
+landsea_mask = landsea.createVariable('LANDMASK', np.float64, ('lat', 'lon'))
+
+landsea.description = 'Land-Sea mask with binary 0/1 values'
+landsea.history = 'Created ' + time.ctime(time.time())
+
+landsea_lons.units = 'east_west'
+landsea_lats.units = 'north_south'
+
+# Now put some data into out variables
+# lets do the lats and lons first
+
+# Raw data values for lat and lon
+lats = np.arange(-90,90,0.5)
+lons = np.arange(-180,180,0.5)
+
+# Now assign the raw data to netcdf coordinate variable
+landsea_lons[:] = lons
+landsea_lats[:] = lats 
+
+# Making the mask
+"""
+Ok, so we need to read the GPP values from the input netcdf file,
+then use this to create a binary mask where any data value is one and 
+any nodata value is 0
+"""
+
+landsea_mask_array = landsea_mask[:]
+input_data_array = GPP[:]
+
+# Get the mask from the input array
+# Note, a feature of netcdf-python is that it by default
+# returns a masked array when loading variables. The mask
+# is true where nodata or missing_value are present, as defined
+# by the attributes of the variable.
+mask = np.ma.getmask(input_data_array)
+
+# Flip the boolean values, then convert them to 1s and zeros
+landsea_mask_oneszeros = np.bitwise_not(mask).astype(int)
+
+# Now write it into the netcdf object, save and close
+
+
