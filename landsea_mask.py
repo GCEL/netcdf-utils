@@ -71,6 +71,17 @@ landsea_lons = landsea.createVariable('longitude', np.float64, ('lon'))
 landsea_times = landsea.createVariable('time', np.float64, ('time',))
 
 landsea_mask = landsea.createVariable('LANDMASK', np.float64, ('lat', 'lon'))
+# Add some relevant attributes.
+landsea_mask.standard_name = "LANDMASK"
+landsea_mask.units = ""
+landsea_mask.scale_factor = 1.0
+landsea_mask.add_offset = 0.0
+landsea_mask.missing_value = -9999.0
+landsea_mask.vmin = 0.0
+landsea_mask.vmax = 0.0
+landsea_mask.num_bins = 0
+# What about extents and DX?
+# ...
 
 landsea.description = 'Land-Sea mask with binary 0/1 values'
 landsea.history = 'Created ' + time.ctime(time.time())
@@ -110,5 +121,9 @@ mask = np.ma.getmask(input_data_array)
 landsea_mask_oneszeros = np.bitwise_not(mask).astype(int)
 
 # Now write it into the netcdf object, save and close
+landsea_mask[:] = landsea_mask_oneszeros
 
+# We should close the two files now
+dataset.close()
+landsea.close()
 
