@@ -57,20 +57,20 @@ for attr in GPP.ncattrs():
 
 # Create a new netcdf file to be used as the land sea mask
 
-landsea = Dataset('/home/dvalters/Datasets/landsea.nc', 'w', format='NETCDF4_CLASSIC')
+landsea = Dataset('/home/dvalters/Datasets/landsea_proj.nc', 'w', format='NETCDF4_CLASSIC')
 print(landsea.file_format)
 
 # Our landsea mask file should have the same dimensions as the input data
-landsea_lat = landsea.createDimension('lat', len(lat))
-landsea_lon = landsea.createDimension('lon', len(lon))
+landsea_lat = landsea.createDimension('north_south', len(lat))
+landsea_lon = landsea.createDimension('east_west', len(lon))
 landsea_time = landsea.createDimension('time', None)
 
 # Now create the coordinate variables
-landsea_lats = landsea.createVariable('latitude', np.float64, ('lat'))
-landsea_lons = landsea.createVariable('longitude', np.float64, ('lon'))
+landsea_lats = landsea.createVariable('latitude', np.float64, ('north_south'))
+landsea_lons = landsea.createVariable('longitude', np.float64, ('east_west'))
 landsea_times = landsea.createVariable('time', np.float64, ('time',))
 
-landsea_mask = landsea.createVariable('LANDMASK', np.float64, ('lat', 'lon'))
+landsea_mask = landsea.createVariable('LANDMASK', np.float64, ('north_south', 'east_west'))
 # Add some relevant attributes.
 landsea_mask.standard_name = "LANDMASK"
 landsea_mask.units = ""
@@ -85,6 +85,11 @@ landsea_mask.num_bins = 0
 
 landsea.description = 'Land-Sea mask with binary 0/1 values'
 landsea.history = 'Created ' + time.ctime(time.time())
+landsea.MAP_PROJECTION = "EQUIDISTANT CYLINDRICAL"
+landsea.SOUTH_WEST_CORNER_LAT = -90.0
+landsea.SOUTH_WEST_CORNER_LON = -180.0
+landsea.DX = 0.5
+landsea.DY = 0.5
 
 landsea_lons.units = 'east_west'
 landsea_lats.units = 'north_south'
