@@ -1,5 +1,7 @@
 ! Program used to test the Fortran netCDF libraries and
 ! debug an issue with a problem JULES netCDF file
+! compile with:
+! <BS>gfortran test_fortran_netCDF.f90 -I/usr/lib64/gfortran/modules/ -lnetcdff -lnetcdf -o test.out
 program test_netcdf
 use netcdf
 implicit none
@@ -13,7 +15,7 @@ if (status /= nf90_NoErr) call handle_err(status)
 status = nf90_inq_varid(ncid, "latitude", rhVarId)
 if (status /= nf90_NoErr) call handle_err(status)
 
-status = nf90_get_var(ncid, "latitude", rhVarId)
+status = nf90_get_var(ncid, rhVarId, rhValue, start = (/4, 3, 3 /))
 if (status /= nf90_NoErr) call handle_err(status)
 
 end program test_netcdf
