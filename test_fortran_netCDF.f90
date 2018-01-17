@@ -1,7 +1,7 @@
 ! Program used to test the Fortran netCDF libraries and
 ! debug an issue with a problem JULES netCDF file
 ! compile with:
-! gfortran test_fortran_netCDF.f90 -I/usr/lib64/gfortran/modules/ -lnetcdff -lnetcdf -o test.out
+! gfortran test_fortran_netCDF.f90 -I/usr/lib64/gfortran/modules/ -lnetcdff -o test.out
 program test_netcdf
 use netcdf
 implicit none
