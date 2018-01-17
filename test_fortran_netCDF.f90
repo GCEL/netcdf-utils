@@ -30,16 +30,32 @@ if (status /= nf90_NoErr) call handle_err('nf90_get_var', status)
 
 ! Get the dimension ID for x
 status = nf90_inq_dimid(ncid, 'x', xId)
-if (status /= nf90_NoErr) call handle_err('nf90_inq_dimid', status)
+if (status /= nf90_NoErr) call handle_err('nf90_inq_dimid x', status)
 
 ! Get the dimension for x, the return assigns it to nx
 status = nf90_inquire_dimension(ncid, xId, len=nx)
-if (status /= nf90_NoErr) call  handle_err('nf90_inquire_dimension', status)
+if (status /= nf90_NoErr) call  handle_err('nf90_inquire_dimension x', status)
+
 
 print *, "DIMENSION X:", ncid, rhVarId, rhValue, xId, nx
 
+
+! Get the dimension ID for y 
+status = nf90_inq_dimid(ncid, 'y', yId)
+if (status /= nf90_NoErr) call handle_err('nf90_inq_dimid y', status)
+
+! Get the dimension for x, the return assigns it to nx
+status = nf90_inquire_dimension(ncid, yId, len=ny)
+if (status /= nf90_NoErr) call  handle_err('nf90_inquire_dimension y', status)
+
+print *, "DIMENSION Y: ", ncid, rhVarId, rhValue, yId, ny
+
 ! Read a variable into an x,y array
-!allocate(lat(nx,ny))
+allocate(lat(nx,ny))
+
+status = nf90_get_var(ncid, rhVarId, lat)
+if (status /= nf90_NoErr) call handle_err('nf90_get_var LAT into array', status)
+
 
 contains
   subroutine handle_err(funcname, status)
