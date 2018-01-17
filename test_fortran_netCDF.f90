@@ -25,7 +25,7 @@ status = nf90_inq_varid(ncid, "latitude", rhVarId)
 if (status /= nf90_NoErr) call handle_err('nf90_inq_varid', status)
 
 ! Read a specific array value from a netcdf file (4,3,3)
-status = nf90_get_var(ncid, rhVarId, rhValue, start = (/4, 3, 3 /))
+status = nf90_get_var(ncid, rhVarId, rhValue, start = (/1, 1, 1 /))
 if (status /= nf90_NoErr) call handle_err('nf90_get_var', status)
 
 ! Get the dimension ID for x
