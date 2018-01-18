@@ -3,7 +3,7 @@
 ! Fortran 90 array
 program transpose_nf90
 use netcdf
-!use handle_error
+use handle_error
 
 implicit none
 integer                            :: ncid, rhVarId, status
