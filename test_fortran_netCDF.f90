@@ -17,7 +17,9 @@ real, allocatable    :: lat(:,:)
 
 
 ! try opening the file
-status = nf90_open("/disk/scratch/local/dvalters/netcdf_test/0.5-degree/JULES_WFDEI_global_dyn_ALL.nc", nf90_NoWrite, ncid)
+status = nf90_open( &
+   "/disk/scratch/local/dvalters/netcdf_test/0.5-degree/JULES_WFDEI_month_single_withTime_2010_12.nc", &
+    nf90_NoWrite, ncid)
 if (status /= nf90_NoErr) call handle_err('nf90_open', status)
 
 ! Try reading the 'latitude' variable
