@@ -59,11 +59,6 @@ status = nf90_get_var(ncid, rhVarId, lat)
 if (status /= nf90_NoErr) call handle_err('nf90_get_var LAT into array', status)
 
 
-contains
-  subroutine handle_err(funcname, status)
-    character(len=*)    ::  funcname
-    integer          ::  status
-    print *, 'ERR: Calling ', funcname, ' returned error code: ', status
-  end subroutine handle_err
+
 
 end program test_netcdf
