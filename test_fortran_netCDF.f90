@@ -7,7 +7,7 @@ use netcdf
 use handle_error
 implicit none
 
-integer :: ncid, latvarid, lonvarid, status
+integer :: ncid, latvarid, lonvarid, gppvarid, status
 ! IDs for the x and y dims
 integer :: xId, yId
 ! lengths of the x and y IDs
@@ -15,6 +15,7 @@ integer :: nx, ny
 real    :: rhValue
 ! Some arrays for the variables
 real, allocatable    :: lat(:)
+real, allocatable    :: gpp(:,:)
 
 ! variables for dim nme and len
 character(len=NF90_MAX_NAME) :: x_name, y_name
@@ -33,6 +34,10 @@ if (status /= nf90_NoErr) call handle_err('nf90_inq_varid (lat)', status)
 status = nf90_inq_varid(ncid, "longitude", lonvarid)
 if (status /= nf90_NoErr) call handle_err('nf90_inq_varid (lon)', status)
 
+! try getting gpp
+status = nf90_inq_varid(ncid, "gpp", gppvarid)
+if (status /= nf90_NoErr) call handle_err('nf90_inq_varid (gpp)', status)
+
 ! Read a specific array value from a netcdf file (4,3,3)
 !status = nf90_get_var(ncid, rhVarId, rhValue, start = (/1, 1, 1 /))
 !if (status /= nf90_NoErr) call handle_err('nf90_get_var', status)
@@ -45,9 +50,7 @@ if (status /= nf90_NoErr) call handle_err('nf90_inq_dimid x', status)
 status = nf90_inquire_dimension(ncid, xId, len=nx, name=x_name)
 if (status /= nf90_NoErr) call  handle_err('nf90_inquire_dimension x', status)
 
-
 print *, "DIMENSION X:", ncid, xId, nx, x_name
-
 
 ! Get the dimension ID for y 
 status = nf90_inq_dimid(ncid, 'y', yId)
@@ -62,15 +65,19 @@ print *, "DIMENSION Y: ", ncid, yId, ny, y_name
 
 ! Read a variable into an x,y array
 allocate(lat(ny))
-
 print *, 'SIZE of 1st DIMENSION', size(lat, 1)
 !print *, 'SIZE of 2nd DIMENSION', size(lat, 2)
+
+allocate(gpp(nx,ny))
+print *, 'SIZE of GPP 1st DIMENSION', size(gpp, 1)
+print *, 'SIZE of GPP 2nd DIMENSION', size(gpp, 2)
 
 
 status = nf90_get_var(ncid, latvarid, lat)
 if (status /= nf90_NoErr) call handle_err('nf90_get_var LAT into array', status)
 
-
+status = nf90_get_var(ncid, gppvarid, gpp)
+if (status /= nf90_NoErr) call handle_err('nf90_get_var GPP into array', status)
 
 
 end program test_netcdf
