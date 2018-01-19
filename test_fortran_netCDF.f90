@@ -14,7 +14,7 @@ integer :: xId, yId
 integer :: nx, ny
 real    :: rhValue
 ! Some arrays for the variables
-real, allocatable    :: lat(:,:)
+real, allocatable    :: lat(:)
 
 ! variables for dim nme and len
 character(len=NF90_MAX_NAME) :: x_name, y_name
@@ -61,10 +61,10 @@ print *, "DIMENSION Y: ", ncid, yId, ny, y_name
 
 
 ! Read a variable into an x,y array
-allocate(lat(nx,ny))
+allocate(lat(ny))
 
 print *, 'SIZE of 1st DIMENSION', size(lat, 1)
-print *, 'SIZE of 2nd DIMENSION', size(lat, 2)
+!print *, 'SIZE of 2nd DIMENSION', size(lat, 2)
 
 
 status = nf90_get_var(ncid, latvarid, lat)
