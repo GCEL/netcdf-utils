@@ -12,7 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
-nc_file = '/disk/scratch/local/dvalters/LVT/LVT_latest_7.2/STATS/LVT_MEAN_FINAL.201012310000.d01.nc'
+nc_file = './LVT_RCORR_FINAL.200612310000.d01.nc'
+#nc_file = '/disk/scratch/local/dvalters/LVT/LVT_latest_7.2/STATS/LVT_MEAN_FINAL.201012310000.d01.nc'
 #File handle
 fh = Dataset(nc_file, mode='r')
 
@@ -23,12 +24,11 @@ soilmoist_vs_nvdi = fh.variables['SoilMoist_v_NDVI'][:]
 soilmoist_vs_nvdi_units = fh.variables['SoilMoist_v_NDVI'].units
 
 # Get some parameters for the Stereographic Projection
-lon_0 = lons.mean()
-lat_0 = lats.mean()
+#lon_0 = lons.mean()
+#lat_0 = lats.mean()
 
 m = Basemap(width=5000000,height=3500000,
-            resolution='l',projection='cyl',\
-            lat_ts=40,lat_0=lat_0,lon_0=lon_0)
+            resolution='l',projection='cyl')
 
 # If our lat and longs were 1D, we would need to meshgrid them
 # here to create 2D arrays.
@@ -38,22 +38,23 @@ xi, yi = m(lon, lat)
 """
 
 # Plot Data
-cs = m.pcolor(lons,lats,np.squeeze(soilmoist_vs_nvdi))
+#cs = m.pcolor(lons,lats,np.squeeze(soilmoist_vs_nvdi))
+cs = m.imshow(soilmoist_vs_nvdi, cmap='RdYlGn', vmin=-1.0, vmax=1.0)
 
 # Add Grid Lines
-m.drawparallels(np.arange(-80., 81., 10.), labels=[1,0,0,0], fontsize=10)
-m.drawmeridians(np.arange(-180., 181., 10.), labels=[0,0,0,1], fontsize=10)
+m.drawparallels(np.arange(-90., 90., 30.), labels=[1,0,0,0], fontsize=16)
+m.drawmeridians(np.arange(-180., 181., 60.), labels=[0,0,0,1], fontsize=16)
 
 # Add Coastlines, States, and Country Boundaries
 m.drawcoastlines()
-m.drawstates()
-m.drawcountries()
+#m.drawstates()
+#m.drawcountries()
 
 # Add Colorbar
 cbar = m.colorbar(cs, location='bottom', pad="10%")
-cbar.set_label(soilmoist_vs_nvdi_units)
+cbar.set_label("Raw Correlation", fontsize=18)
 
 # Add Title
-plt.title('Raw Correllation Soil Moisture -- NVDI')
+plt.title('Soil Moisture (ESA CCI) vs NDVI (GIMMS)', fontsize=28)
 
 plt.show()
